@@ -4,7 +4,7 @@ import Block from '../types/Block'
 import Transaction from '../types/Transaction'
 import { CoreError } from './error'
 
-export default interface IBlockchain {
+export interface IBlockchain {
   createNewBlock(nonce: number, previousBlockHash: string, hash: string): Block
 
   get lastBlock(): Block

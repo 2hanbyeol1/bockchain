@@ -6,15 +6,13 @@ import Transaction from '../types/Transaction'
 import { Range } from 'immutable'
 import { Result, err, ok } from '../libs/jinx/result'
 import { CoreError } from './error'
-import IBlockchain, { BlockData } from './iBlockChain'
 import { Option, nullable } from '../libs/jinx/option'
+import { BlockData, IBlockchain } from './iBlockchain'
 
 export default class Blockchain implements IBlockchain {
   constructor(
     private chain: Block[] = [],
-    private pendingTransactions: Transaction[] = [],
-    // private networkNodes: String[] = [],
-    // private readonly currentNodeUrl: string = currentNodeUrl
+    private pendingTransactions: Transaction[] = [] // private networkNodes: String[] = [], // private readonly currentNodeUrl: string = currentNodeUrl
   ) {
     this.createNewBlock(100, '0', '0') // genesis
   }
