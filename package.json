@@ -1,8 +1,8 @@
 {
-  "name": "javaScript-blockchain",
-  "version": "1.0.0",
-  "description": "Learn Blockchain By Building Your Own In JavaScript",
-  "main": "index.js",
+  "name": "blockchain",
+  "version": "0.0.1",
+  "description": "Blockchain implementation",
+  "main": "./src/app.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node\" src/app.ts 3000",
@@ -12,8 +12,8 @@
     "node_4": "nodemon --watch src -e js dev/networkNode.js 3004 http://localhost:3004",
     "node_5": "nodemon --watch src -e js dev/networkNode.js 3005 http://localhost:3005"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "jinlee0",
+  "license": "MIT",
   "dependencies": {
     "body-parser": "^1.18.2",
     "express": "^4.16.3",
@@ -32,6 +32,5 @@
     "@types/uuid": "^9.0.7",
     "ts-node": "^10.9.1",
     "typescript": "^5.3.2"
-  },
-  "types": "./dev/types/**.ts"
+  }
 }
