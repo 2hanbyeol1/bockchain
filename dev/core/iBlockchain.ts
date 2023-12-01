@@ -1,7 +1,7 @@
 import { Option } from '../libs/jinx/option'
 import { Result } from '../libs/jinx/result'
-import Block from '../types/Block'
-import Transaction from '../types/Transaction'
+import { Block } from '../types/Block'
+import { Transaction } from '../types/Transaction'
 import { CoreError } from './error'
 
 export interface IBlockchain {

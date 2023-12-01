@@ -1,6 +1,6 @@
-import Transaction from './Transaction'
+import { Transaction } from './Transaction'
 
-export default interface Block {
+export type Block =  {
   index: number
   timestamp: number
   transactions: Transaction[]

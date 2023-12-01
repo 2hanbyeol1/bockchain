@@ -1,4 +1,4 @@
-export default interface Transaction {
+export type Transaction = {
   transactionId: string
   sender: string
   recipient: string

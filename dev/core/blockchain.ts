@@ -1,13 +1,13 @@
 import sha256 from 'sha256'
 const currentNodeUrl = process.argv[3]
 import uuid from 'uuid'
-import Block from '../types/Block'
-import Transaction from '../types/Transaction'
 import { Range } from 'immutable'
 import { Result, err, ok } from '../libs/jinx/result'
 import { CoreError } from './error'
 import { Option, nullable } from '../libs/jinx/option'
 import { BlockData, IBlockchain } from './iBlockchain'
+import { Block } from '../types/Block'
+import { Transaction } from '../types/Transaction'
 
 export default class Blockchain implements IBlockchain {
   constructor(
