@@ -4,17 +4,23 @@ import uuid from 'uuid'
 import { Range } from 'immutable'
 import { Result, err, ok } from '../libs/jinx/result'
 import { CoreError } from './error'
-import { Option, nullable } from '../libs/jinx/option'
+import { Option, none, nullable, some } from '../libs/jinx/option'
 import { BlockData, IBlockchain } from './iBlockchain'
 import { Block } from '../types/Block'
 import { Transaction } from '../types/Transaction'
 
 export default class Blockchain implements IBlockchain {
   constructor(
-    private chain: Block[] = [],
-    private pendingTransactions: Transaction[] = [] // private networkNodes: String[] = [], // private readonly currentNodeUrl: string = currentNodeUrl
+    public chain: Block[] = [],
+    public pendingTransactions: Transaction[] = [], // private networkNodes: String[] = [],
+    private readonly _currentNodeUrl: string = currentNodeUrl,
+    public networkNodes: string[] = []
   ) {
     this.createNewBlock(100, '0', '0') // genesis
+  }
+
+  get currentNodeUrl(): string {
+    return this._currentNodeUrl
   }
 
   createNewBlock(
@@ -42,19 +48,26 @@ export default class Blockchain implements IBlockchain {
   createNewTransaction(
     amount: number,
     sender: string,
-    receipient: string
-  ): Transaction {
-    return {
+    recipient: string
+  ): Result<Transaction, CoreError> {
+    return this.checkBalance({ address: sender, amount }).map(() => ({
       amount,
       sender,
-      recipient: receipient,
+      recipient,
       transactionId: uuid.v1().split('-').join(''),
-    }
+    }))
   }
 
-  addTransactionToPendingTransactions(transaction: Transaction): number {
-    this.pendingTransactions.push(transaction)
-    return this.lastBlock.index + 1
+  addTransactionToPendingTransactions(
+    transaction: Transaction
+  ): Result<number, CoreError> {
+    return this.checkBalance({
+      address: transaction.sender,
+      amount: transaction.amount,
+    }).map(() => {
+      this.pendingTransactions.push(transaction)
+      return this.lastBlock.index + 1
+    })
   }
 
   hashBlock(
@@ -149,16 +162,19 @@ export default class Blockchain implements IBlockchain {
     )
   }
 
-  getAddressData(address: string): {
+  getAddressData(address: string): Option<{
     balance: number
     transactions: Transaction[]
-  } {
+  }> {
     const transactions = this.chain
       .flatMap((block) => block.transactions)
       .filter(
         (transaction) =>
           transaction.recipient === address || transaction.recipient === address
       )
+    if (transactions.length == 0) {
+      return none()
+    }
     const balance = transactions
       .map((transaction) =>
         transaction.recipient === address
@@ -166,9 +182,31 @@ export default class Blockchain implements IBlockchain {
           : -transaction.sender
       )
       .reduce((acc, curr) => acc + curr)
-    return {
+    return some({
       transactions,
       balance,
+    })
+  }
+
+  private checkBalance = ({
+    address,
+    amount,
+  }: {
+    address: string
+    amount: number
+  }): Result<{}, CoreError> => {
+    if (address == '00') {
+      // Genesis has a lot of money.
+      return ok({})
     }
+    return this.getAddressData(address).mapEach({
+      Some: ({ balance }) => {
+        if (balance - amount < 0) {
+          return err({ type: 'InsufficientBalance', balance })
+        }
+        return ok({})
+      },
+      None: () => err({ type: 'AddressNotFound', address }),
+    })
   }
 }

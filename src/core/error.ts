@@ -7,3 +7,5 @@ export type CoreError =
   | { type: 'InvalidGenesisPreviousHash'; expected: string; actual: string }
   | { type: 'GenesisHasTransaction' }
   | { type: 'BlockNotFoundByHash'; hash: string }
+  | { type: 'InsufficientBalance'; balance: number }
+  | { type: 'AddressNotFound'; address: string }
