@@ -179,7 +179,7 @@ export default class Blockchain implements IBlockchain {
       .map((transaction) =>
         transaction.recipient === address
           ? transaction.amount
-          : -transaction.sender
+          : -transaction.amount
       )
       .reduce((acc, curr) => acc + curr)
     return some({
