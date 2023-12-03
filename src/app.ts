@@ -16,7 +16,7 @@ const bitcoin = new Blockchain() as IBlockchain
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: false }))
 
-app.get('/heathcheck', (req, res) => {
+app.get('/healthcheck', (req, res) => {
   res.send('ok')
 })
 
