@@ -150,6 +150,11 @@ app.post('/receive-new-block', function (req, res) {
 app.post('/register-and-broadcast-node', function (req, res) {
   const newNodeUrl = req.body.newNodeUrl as string
 
+  if(bitcoin.currentNodeUrl === newNodeUrl) {
+    res.json({ note: `Current node cannot be registered` });
+    return;
+  }
+
   // health check
   rp({
     uri: newNodeUrl + '/healthcheck',
