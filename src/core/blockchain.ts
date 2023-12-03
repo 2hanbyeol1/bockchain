@@ -170,7 +170,7 @@ export default class Blockchain implements IBlockchain {
       .flatMap((block) => block.transactions)
       .filter(
         (transaction) =>
-          transaction.recipient === address || transaction.recipient === address
+          transaction.sender === address || transaction.recipient === address
       )
     if (transactions.length == 0) {
       return none()
