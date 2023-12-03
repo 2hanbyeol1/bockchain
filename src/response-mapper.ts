@@ -27,5 +27,9 @@ const map = (e: CoreError): any => {
       return {
         note: `Transaction declined due to insufficient funds. balance=${e.balance}`,
       }
+    case 'ProofFailed':
+      return {
+        note: `Proof of work failed`,
+      }
   }
 }
