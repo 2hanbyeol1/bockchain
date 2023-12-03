@@ -31,5 +31,9 @@ const map = (e: CoreError): any => {
       return {
         note: `Address(${e.address}) was not found`
       }
+    case 'ProofFailed':
+      return {
+        note: `Proof of work failed`,
+      }
   }
 }
