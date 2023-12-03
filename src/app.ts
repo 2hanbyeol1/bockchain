@@ -151,46 +151,41 @@ app.post('/register-and-broadcast-node', function (req, res) {
   const newNodeUrl = req.body.newNodeUrl as string
 
   // health check
-  let exist = true
   rp({
     uri: newNodeUrl + '/healthcheck',
     method: 'GET',
-  }).catch(() => (exist = false))
-  if (!exist) {
-    res.json({ note: `The node doesn't respond` })
-    return
-  }
+  }).then(() => {
+    if (bitcoin.networkNodes.indexOf(newNodeUrl) == -1)
+      bitcoin.networkNodes.push(newNodeUrl)
 
-  if (bitcoin.networkNodes.indexOf(newNodeUrl) == -1)
-    bitcoin.networkNodes.push(newNodeUrl)
-
-  const regNodesPromises = bitcoin.networkNodes.map((networkNodeUrl) => {
-    const requestOptions = {
-      uri: networkNodeUrl + '/register-node',
-      method: 'POST',
-      body: { newNodeUrl },
-      json: true,
-    }
-
-    rp(requestOptions)
-  })
-
-  Promise.all(regNodesPromises)
-    .then(() => {
-      const bulkRegisterOptions = {
-        uri: newNodeUrl + '/register-nodes-bulk',
+    const regNodesPromises = bitcoin.networkNodes.map((networkNodeUrl) => {
+      const requestOptions = {
+        uri: networkNodeUrl + '/register-node',
         method: 'POST',
-        body: {
-          allNetworkNodes: [...bitcoin.networkNodes, bitcoin.currentNodeUrl],
-        },
+        body: { newNodeUrl },
         json: true,
       }
-      return rp(bulkRegisterOptions)
+
+      rp(requestOptions)
     })
-    .then(() => {
-      res.json({ note: 'New node registered with network successfully.' })
-    })
-    .catch((e) => res.json({ note: `Unexpected error: ${e}` }))
+
+    Promise.all(regNodesPromises)
+      .then(() => {
+        const bulkRegisterOptions = {
+          uri: newNodeUrl + '/register-nodes-bulk',
+          method: 'POST',
+          body: {
+            allNetworkNodes: [...bitcoin.networkNodes, bitcoin.currentNodeUrl],
+          },
+          json: true,
+        }
+        return rp(bulkRegisterOptions)
+      })
+      .then(() => {
+        res.json({ note: 'New node registered with network successfully.' })
+      })
+      .catch((e) => res.json({ note: `Unexpected error: ${e}` }))
+  }).catch(() => {res.json({ note: `The node doesn't respond` })})
 })
 
 app.post('/register-node', function (req, res) {
