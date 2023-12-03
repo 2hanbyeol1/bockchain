@@ -257,7 +257,7 @@ app.get('/consensus', function (_req, res) {
 app.get('/block/:blockHash', function (req, res) {
   const blockHash = req.params.blockHash
   bitcoin.getBlock(blockHash).forEach({
-    Some: (correctBlock) => res.json({ correctBlock }),
+    Some: (correctBlock) => res.json({ block: correctBlock }),
     None: () => res.json({ note: 'Block not found by block hash' }), // Block not found by blockHash
   })
 })
@@ -273,7 +273,7 @@ app.get('/transaction/:transactionId', function (req, res) {
 app.get('/address/:address', function (req, res) {
   const address = req.params.address
   bitcoin.getAddressData(address).forEach({
-    Some: (t) => res.json({ addressData: t }),
+    Some: (t) => res.json({ addressData: { addressTransactions: t.transactions, addressBalance: t.balance } }),
     None: () => res.json({ note: 'Address not found by id' }),
   })
 })
